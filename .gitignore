@@ -1,0 +1,67 @@
+# =============================================================================
+# .gitignore pour répertoire Claude (~/.claude)
+# =============================================================================
+
+# SÉCURITÉ CRITIQUE - Fichiers contenant des tokens/credentials
+.credentials.json
+*.token
+*.key
+*.env
+*.env.local
+*.env.prod
+*.env.staging
+
+# Données internes Anthropic
+.anthropic/
+.anthropic/**
+
+# Historiques de conversations (contiennent des données utilisateur)
+projects/
+projects/**/*.jsonl
+
+# Cache et fichiers temporaires
+downloads/
+ide/
+shell-snapshots/
+todos/
+statsig/
+*.tmp
+*.temp
+*.log
+*.cache
+
+# Fichiers de verrouillage
+.update.lock
+*.lock
+
+# Configuration plugins (potentiellement sensible)
+plugins/
+plugins/**
+
+# Fichiers système
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*~
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Backup files
+*.bak
+*.backup
+*.old
+
+# =============================================================================
+# FICHIERS VERSIONNÉS (sécurisés) :
+# - CLAUDE.md (instructions globales)
+# - agents/ (agents spécialisés)
+# - knowledge/ (base de connaissances)
+# - settings.json (configuration non-sensible)
+# - statusline-enhanced.sh (script personnalisé)
+# =============================================================================
