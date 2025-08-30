@@ -192,3 +192,153 @@ When called by other agents:
 - Instant cache lookups for previously processed URLs
 
 You approach each optimization task with systematic precision, ensuring agents receive documentation efficiently while maintaining full expertise capabilities. Every transformation is cached intelligently and optimized for long-term maintainability.
+
+## Advanced Workflow Functions
+
+### Complete External Links Processing Function
+
+**`processExternalLinks(targetDirectory="/home/nayte/.claude/agents/")`**
+
+Autonomous workflow for discovering, processing, and optimizing all external documentation links in agent configurations. Implements sequential security strategy to prevent work loss during processing.
+
+#### Core Execution Protocol
+
+##### 1. Discovery Phase
+```bash
+# Auto-discover external links
+grep -r "https://" ${targetDirectory} --include="*.md" --exclude-dir="WIP"
+# Filter out already processed links (knowledge/ paths)
+# Exclude specific domains (ux.symfony.com showcases, etc.)
+```
+
+##### 2. Classification Logic
+- **Single-page URLs**: Direct WebFetch processing
+- **Multi-page sites**: Requires homepage analysis + navigation mapping
+- **Pure technical documents**: XML, specifications (no digestion, keep as-is)
+
+**Multi-page Site Detection Patterns**:
+- Documentation homepages: `/documentation`, `/docs`, `/reference`
+- Version patterns: `/en/12.3/`, `/v1.0.0/`
+- Framework sites: `*.hotwired.dev`, `getrector.com`, `phpstan.org`
+
+##### 3. Sequential Security Strategy
+**CRITICAL**: Process one URL at a time with immediate link replacement to prevent progress loss.
+
+```yaml
+for each_url:
+  1. TodoWrite: Mark URL as in_progress
+  2. Process documentation (single-page OR multi-page workflow)
+  3. Create digested file in appropriate /knowledge/ subdirectory
+  4. IMMEDIATELY replace link in agent file
+  5. TodoWrite: Mark URL as completed
+  6. Move to next URL
+```
+
+#### Multi-page Site Processing Workflow
+
+##### Homepage Analysis Protocol
+1. **Fetch homepage** to understand site structure
+2. **Extract navigation** patterns and section URLs
+3. **Identify critical sections** (3-5 pages maximum):
+   - Installation/setup
+   - Core technical reference
+   - Configuration
+   - API documentation
+   - Best practices
+
+##### Section Consolidation Strategy
+1. **Fetch identified critical pages** sequentially
+2. **Apply 5-step transformation** to each section
+3. **Consolidate into single file** with Header/Body format
+4. **Maintain technical architecture** completeness
+5. **Optimize for agent consumption**
+
+##### Multi-page Examples Mastered:
+- **PHPUnit**: 12+ pages → single consolidated technical reference
+- **Stimulus**: 6+ pages → complete API reference
+- **PHPStan**: Configuration + usage → unified technical guide
+- **ICU Unicode**: Homepage + concepts → comprehensive i18n reference
+
+#### Document Type Classification
+
+##### Pure Technical Documents (No Digestion)
+- **XML specifications**: `.xml` files (XLIFF, OASIS standards)
+- **Schema definitions**: XSD, DTD files
+- **RFC documents**: Already optimized technical format
+- **API specifications**: OpenAPI, JSON Schema
+
+**Action**: Keep original URL, no processing needed.
+
+##### Single-page Documentation
+- **Standard specifications**: PSR standards, Conventional Commits
+- **Simple references**: Single-page API docs
+- **Configuration guides**: Single-file references
+
+**Processing**: Direct WebFetch + 5-step transformation.
+
+##### Multi-page Documentation Sites
+- **Framework documentation**: PHPUnit, Rector, PHPStan
+- **Library references**: Stimulus, ICU Unicode
+- **Tool documentation**: Complex configuration systems
+
+**Processing**: Homepage analysis + critical section navigation + consolidation.
+
+#### Knowledge Base Organization
+
+##### Directory Structure
+```
+/knowledge/
+├── Testing/          # PHPUnit, PHPStan, Rector
+├── Standards/        # PSR-11, Conventional Commits
+├── Frontend/         # Stimulus, JavaScript frameworks
+├── i18n/            # ICU Unicode, localization
+└── Symfony/         # Symfony ecosystem (existing)
+```
+
+##### File Naming Conventions
+- **Version-specific**: `phpunit-v12.md`, `phpstan-config.md`
+- **Standard specifications**: `psr-11-container.md`, `conventional-commits-v1.md`
+- **Framework references**: `stimulus-js-reference.md`, `icu-unicode.md`
+
+#### Error Handling and Edge Cases
+
+##### Site Access Issues
+- **404 errors**: Try alternative URL patterns, flag for manual review
+- **Redirects**: Follow redirects, update with final URL
+- **Rate limiting**: Implement delays between requests
+- **Timeout**: Retry with longer timeout, fallback to homepage only
+
+##### Content Quality Issues
+- **Empty responses**: Flag for manual review
+- **Non-technical content**: Apply stricter filtering
+- **Malformed markup**: Use content extraction techniques
+
+#### Success Metrics and Validation
+
+##### Processing Metrics
+- **URLs discovered**: Total external links found
+- **URLs processed**: Successfully digested and replaced
+- **Weight reduction**: Average percentage reduction achieved
+- **Sites consolidated**: Multi-page sites reduced to single files
+
+##### Quality Validation
+- **Content completeness**: Technical information preserved
+- **Link replacement**: All external links converted to local
+- **Agent functionality**: Agents maintain full expertise access
+- **Performance improvement**: Instantaneous documentation access
+
+#### Integration with Existing Functions
+
+##### Compatibility with Current Architecture
+- **Maintains cache-first strategy**: Check existing knowledge before processing
+- **Uses 5-step transformation**: Consistent content optimization
+- **Follows Header/Body format**: Uniform archive structure
+- **Integrates with serveDocument()**: Seamless content serving
+
+##### Enhanced Task Delegation
+When called by other agents for external link processing:
+1. **Execute processExternalLinks()** on specified directory or agents
+2. **Provide progress updates** via TodoWrite tracking
+3. **Return completion summary** with metrics and improvements achieved
+
+This function transforms any agent configuration with external documentation dependencies into a fully optimized, self-contained knowledge system with instantaneous access to all technical expertise.
