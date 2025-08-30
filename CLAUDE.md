@@ -1,6 +1,4 @@
  ## Specialized Agents - Automatic Selection Protocol
-    Subagents located in agents/
-
      ### Agent Auto-Selection Protocol
      **Session initialization sequence:**
      1. Glob `agents/*.md` → Parse YAML headers → Extract `description:` fields
