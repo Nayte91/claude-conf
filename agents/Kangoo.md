@@ -84,7 +84,7 @@ Follow this systematic approach for efficient knowledge loading:
 
 #### Documentation
 
-- https://raw.githubusercontent.com/symfony/ux/refs/heads/2.x/src/TwigComponent/doc/index.rst
+- /home/nayte/.claude/knowledge/Symfony/twig-component-v2x.md
 - ./vendor/symfony/ux-twig-component/
 
 ### Symfony UX Live Components
@@ -98,7 +98,7 @@ Follow this systematic approach for efficient knowledge loading:
 
 #### Documentation
 
-- https://raw.githubusercontent.com/symfony/ux/refs/heads/2.x/src/LiveComponent/doc/index.rst
+- /home/nayte/.claude/knowledge/Symfony/live-component-v2x.md
 - ./vendor/symfony/ux-live-component
 
 ### Symfony Stimulus Bundle & StimulusJS
@@ -111,8 +111,8 @@ Follow this systematic approach for efficient knowledge loading:
 
 #### Documentation
 
-- https://raw.githubusercontent.com/symfony/stimulus-bundle/refs/heads/2.x/doc/index.rst
-- https://stimulus.hotwired.dev/reference
+- /home/nayte/.claude/knowledge/Symfony/stimulus-bundle-v2x.md
+- /home/nayte/.claude/knowledge/Frontend/stimulus-js-reference.md
 - ./vendor/symfony/stimulus-bundle
 - ./assets/vendor/@hotwired/stimulus/stimulus.index.js
 
@@ -125,7 +125,7 @@ Follow this systematic approach for efficient knowledge loading:
 
 #### Documentation
 
-- https://raw.githubusercontent.com/symfony/ux/refs/heads/2.x/src/Icons/doc/index.rst
+- /home/nayte/.claude/knowledge/Symfony/ux-icons-v2x.md
 - ./vendor/symfony/ux-icons/
 - OPTIONAL: https://ux.symfony.com/icons
 
@@ -139,7 +139,7 @@ Follow this systematic approach for efficient knowledge loading:
 
 #### Documentation
 
-- https://raw.githubusercontent.com/symfony/ux/refs/heads/2.x/src/Map/doc/index.rst
+- /home/nayte/.claude/knowledge/Symfony/ux-map-v2x.md
 - ./vendor/symfony/ux-map/
 - OPTIONAL: https://ux.symfony.com/map
 
@@ -166,7 +166,7 @@ Follow this systematic approach for efficient knowledge loading:
 
 #### Documentation
 
-- https://raw.githubusercontent.com/symfony/symfony-docs/refs/heads/7.3/frontend/asset_mapper.rst
+- /home/nayte/.claude/knowledge/Symfony/asset-mapper-v73.md
 - ./vendor/symfony/asset-mapper/
 
 ### Twig template engine
@@ -183,7 +183,7 @@ Follow this systematic approach for efficient knowledge loading:
 
 #### Documentation
 
-- https://twig.symfony.com/doc/3.x/
+- /home/nayte/.claude/knowledge/Symfony/twig-v3x.md
 - ./vendor/twig/
 
 **Integration Responsibilities:**
@@ -203,7 +203,7 @@ Follow this systematic approach for efficient knowledge loading:
 - Implement proper error handling and fallback behaviors
 - Follow BEM or similar CSS methodology when working with styles
 
-## Best practices (https://raw.githubusercontent.com/symfony/symfony-docs/refs/heads/7.3/best_practices.rst)
+## Best practices (/home/nayte/.claude/knowledge/Symfony/best-practices-v73.md)
 
 ### Forms
 

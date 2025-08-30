@@ -1,44 +1,43 @@
-# Symfony Message Formats v7.3 - Agent Reference
-
-## Metadata
+## Header
 - **Source URL**: https://raw.githubusercontent.com/symfony/symfony-docs/refs/heads/7.3/reference/formats/message_format.rst
-- **Processed Date**: 2025-08-29
-- **Requesting Agent**: Documentation Chewer
-- **Domain**: Translation/i18n
-- **Version**: 7.3
-- **Weight Reduction**: ~75% (specialized extraction)
-- **Key Sections**: ICU MessageFormat, Complex Translations, Pluralization, Gender Selection
+- **Processed Date**: 2025-01-25
+- **Domain**: symfony/symfony-docs
+- **Version**: v73
+- **Weight Reduction**: ~75%
+- **Key Sections**: ICU MessageFormat, Complex Translations, Pluralization, Gender Selection, Date/Time Formatting, Number Formatting
 
-## ICU MessageFormat Overview
+## Body
 
-### Activation Requirements
-- Translation files MUST use `+intl-icu` suffix
-- Examples: `messages+intl-icu.en.yaml`, `validators+intl-icu.fr.xlf`
-- Works with YAML, XLIFF, PHP formats
+### ICU MessageFormat Overview
 
-### Core Syntax Pattern
+#### Activation Requirements
+- **Translation files MUST use** `+intl-icu` suffix
+- **Examples**: `messages+intl-icu.en.yaml`, `validators+intl-icu.fr.xlf`
+- **Works with**: YAML, XLIFF, PHP formats
+
+#### Core Syntax Pattern
 ```
 {variable_name, function_name, function_statement}
 ```
 
-## Basic Placeholders
+### Basic Placeholders
 
-### Simple Variable Replacement
+#### Simple Variable Replacement
 ```yaml
 # messages+intl-icu.en.yaml
 welcome: 'Hello {name}!'
 greeting: 'Welcome back, {username}!'
 ```
 
-Usage:
+**Usage**:
 ```php
 $translator->trans('welcome', ['name' => 'John']);
 // Output: "Hello John!"
 ```
 
-## Select Function (Conditional Messages)
+### Select Function (Conditional Messages)
 
-### Gender-based Selection
+#### Gender-based Selection
 ```yaml
 invitation_title: >-
     {organizer_gender, select,
@@ -48,7 +47,7 @@ invitation_title: >-
     }
 ```
 
-### Status-based Selection
+#### Status-based Selection
 ```yaml
 user_status: >-
     {status, select,
@@ -59,14 +58,14 @@ user_status: >-
     }
 ```
 
-**Key Rules:**
-- `other` case is MANDATORY (fallback)
-- Nested placeholders allowed within cases
-- Case-sensitive matching
+**Key Rules**:
+- **`other` case is MANDATORY** (fallback)
+- **Nested placeholders allowed** within cases
+- **Case-sensitive matching**
 
-## Plural Function (Pluralization)
+### Plural Function (Pluralization)
 
-### Basic Pluralization
+#### Basic Pluralization
 ```yaml
 num_of_apples: >-
     {apples, plural,
@@ -76,7 +75,7 @@ num_of_apples: >-
     }
 ```
 
-### Complex Pluralization with Ranges
+#### Complex Pluralization with Ranges
 ```yaml
 file_count: >-
     {count, plural,
@@ -89,21 +88,21 @@ file_count: >-
     }
 ```
 
-**Plural Categories (locale-dependent):**
-- `zero` - Some languages (Arabic, Latvian)
-- `one` - Singular form
-- `two` - Dual form (Arabic, Welsh)
-- `few` - Small quantities (Polish, Russian)
-- `many` - Large quantities (Polish, Russian)
-- `other` - Default/fallback (MANDATORY)
+**Plural Categories** (locale-dependent):
+- **`zero`** - Some languages (Arabic, Latvian)
+- **`one`** - Singular form
+- **`two`** - Dual form (Arabic, Welsh)
+- **`few`** - Small quantities (Polish, Russian)
+- **`many`** - Large quantities (Polish, Russian)
+- **`other`** - Default/fallback (MANDATORY)
 
-**Special Values:**
-- `#` - Placeholder for actual number
-- `=0`, `=1`, `=2` - Exact number matching
+**Special Values**:
+- **`#`** - Placeholder for actual number
+- **`=0`, `=1`, `=2`** - Exact number matching
 
-## Ordinal Function
+### Ordinal Function
 
-### Ordinal Number Formatting
+#### Ordinal Number Formatting
 ```yaml
 position: >-
     {pos, ordinal,
@@ -114,62 +113,62 @@ position: >-
     }
 ```
 
-Usage:
+**Usage**:
 ```php
 $translator->trans('position', ['pos' => 1]);  // "1st position"
 $translator->trans('position', ['pos' => 22]); // "22nd position"
 ```
 
-## Date/Time Formatting
+### Date/Time Formatting
 
-### Date Formatting
+#### Date Formatting
 ```yaml
 last_login: 'Last login: {date, date, short}'
 full_date: 'Created on {date, date, full}'
 ```
 
-**Date Styles:**
-- `short` - 12/13/52
-- `medium` - Jan 12, 1952
-- `long` - January 12, 1952
-- `full` - Tuesday, January 12, 1952
+**Date Styles**:
+- **`short`** - 12/13/52
+- **`medium`** - Jan 12, 1952
+- **`long`** - January 12, 1952
+- **`full`** - Tuesday, January 12, 1952
 
-### Time Formatting
+#### Time Formatting
 ```yaml
 current_time: 'Current time: {time, time, medium}'
 ```
 
-**Time Styles:**
-- `short` - 3:30 PM
-- `medium` - 3:30:32 PM
-- `long` - 3:30:32 PM PST
-- `full` - 3:30:42 PM PST
+**Time Styles**:
+- **`short`** - 3:30 PM
+- **`medium`** - 3:30:32 PM
+- **`long`** - 3:30:32 PM PST
+- **`full`** - 3:30:42 PM PST
 
-### Combined Date/Time
+#### Combined Date/Time
 ```yaml
 timestamp: 'Event at {datetime, date, medium} {datetime, time, short}'
 ```
 
-## Number Formatting
+### Number Formatting
 
-### Currency Formatting
+#### Currency Formatting
 ```yaml
 price: 'Total cost: {amount, number, currency}'
 ```
 
-### Percentage Formatting
+#### Percentage Formatting
 ```yaml
 progress: 'Progress: {percent, number, percent}'
 ```
 
-### Integer Formatting
+#### Integer Formatting
 ```yaml
 count: 'Items: {items, number, integer}'
 ```
 
-## Complex Nested Examples
+### Complex Nested Examples
 
-### Gender + Pluralization
+#### Gender + Pluralization
 ```yaml
 party_invitation: >-
     {organizer_gender, select,
@@ -191,7 +190,7 @@ party_invitation: >-
     }
 ```
 
-### Multi-variable Selection
+#### Multi-variable Selection
 ```yaml
 notification: >-
     {type, select,
@@ -210,9 +209,9 @@ notification: >-
     }
 ```
 
-## Implementation Guidelines
+### Implementation Guidelines
 
-### File Structure
+#### File Structure
 ```
 translations/
 ├── messages+intl-icu.en.yaml     # ICU format
@@ -221,7 +220,7 @@ translations/
 └── messages.fr.yaml
 ```
 
-### PHP Usage
+#### PHP Usage
 ```php
 // Standard usage
 $message = $translator->trans('num_of_apples', [
@@ -239,7 +238,7 @@ $message = $translator->trans('party_invitation', [
 $message = new TranslatableMessage('num_of_apples', ['apples' => 0]);
 ```
 
-### Twig Templates
+#### Twig Templates
 ```twig
 {# ICU format automatically detected #}
 {{ 'num_of_apples'|trans({'apples': apple_count}) }}
@@ -252,27 +251,27 @@ $message = new TranslatableMessage('num_of_apples', ['apples' => 0]);
 }) }}
 ```
 
-## Performance Considerations
+### Performance Considerations
 
-### ICU vs Standard Format
-- ICU: Requires additional parsing, slower
-- Standard: Direct key-value lookup, faster
-- Use ICU only when complex logic needed
+#### ICU vs Standard Format
+- **ICU**: Requires additional parsing, slower
+- **Standard**: Direct key-value lookup, faster
+- **Use ICU only** when complex logic needed
 
-### Caching Behavior
-- ICU messages are cached after first parse
-- Format validation occurs during cache warming
-- Use `cache:clear` after format changes
+#### Caching Behavior
+- **ICU messages cached** after first parse
+- **Format validation** occurs during cache warming
+- **Use `cache:clear`** after format changes
 
-## Debugging & Validation
+### Debugging & Validation
 
-### Common Errors
+#### Common Errors
 1. **Missing `other` case**: Always required in select/plural
 2. **Unbalanced braces**: `{variable, select, case{message}`
 3. **Invalid function names**: Only `select`, `plural`, `ordinal`, `date`, `time`, `number` supported
 4. **Case sensitivity**: Function names and cases are case-sensitive
 
-### Debug Commands
+#### Debug Commands
 ```bash
 # Validate ICU format syntax
 php bin/console lint:translations
@@ -284,15 +283,15 @@ php bin/console translation:extract --format=+intl-icu fr
 php bin/console debug:translation fr --domain=messages
 ```
 
-## Migration from Standard Format
+### Migration from Standard Format
 
-### Conversion Process
-1. Rename files: `messages.en.yaml` → `messages+intl-icu.en.yaml`
-2. Convert choice format to plural format
-3. Test all message variations
-4. Update extraction commands
+#### Conversion Process
+1. **Rename files**: `messages.en.yaml` → `messages+intl-icu.en.yaml`
+2. **Convert choice format** to plural format
+3. **Test all message variations**
+4. **Update extraction commands**
 
-### Choice to Plural Migration
+#### Choice to Plural Migration
 ```yaml
 # OLD (choice format)
 apples: '{0} no apples|{1} one apple|]1,Inf[ %count% apples'
@@ -306,12 +305,7 @@ apples: >-
     }
 ```
 
-## Cross-References
-- Related Knowledge: `/home/nayte/.claude/knowledge/Symfony/translation-v73.md`
-- Agent Applications: i18n-expert, symfony-developer
-- Update Schedule: Re-process with major Symfony releases
-
-## Integration Points
+### Integration Points
 - **Forms**: Validation message formatting
 - **Validators**: Complex constraint messages  
 - **Templates**: Dynamic content presentation

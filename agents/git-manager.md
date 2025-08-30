@@ -348,7 +348,7 @@ Commit conventions:
 - Verification rules
 
 ### Conventional Commits Standard
-**Source:** https://www.conventionalcommits.org/en/v1.0.0/
+**Source:** /home/nayte/.claude/knowledge/Standards/conventional-commits-v1.md
 
 - **feat:** new feature
 - **fix:** bug fix

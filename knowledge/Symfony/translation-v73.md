@@ -1,20 +1,22 @@
-# Symfony Translation v7.3 - Developer Reference Digest
+## Header
 
-## Metadata
-- **Source URL**: https://raw.githubusercontent.com/symfony/symfony-docs/refs/heads/7.3/translation.rst
-- **Processed Date**: 2025-08-29
-- **Domain**: Translation/i18n
+- **Source URL**: https://symfony.com/doc/current/translation.html
+- **Processed Date**: 2025-08-30
+- **Requesting Agent**: Documents Chewer (force refresh)
+- **Domain**: Symfony
 - **Version**: 7.3
-- **Weight Reduction**: ~85% (from 1702 lines to ~400 lines)
+- **Weight Reduction**: ~78% (from web documentation to essential directives)
+- **Key Sections**: Installation, Configuration, Translation Methods, File Formats, Locale Management, Advanced Features, Commands
 
-## Installation & Configuration
+## Body
 
-### Install
+### Installation
 ```bash
 composer require symfony/translation
 ```
+Requires PHP `intl` extension for non-English locales.
 
-### Basic Configuration
+### Configuration
 ```yaml
 # config/packages/translation.yaml
 framework:
@@ -22,359 +24,246 @@ framework:
     translator:
         default_path: '%kernel.project_dir%/translations'
         fallbacks: ['en']
-        enabled_locales: ['en', 'fr', 'de'] # optional restriction
+        enabled_locales: ['en', 'fr', 'de']
 ```
 
-## Core Translation Methods
+### Translation Methods
 
-### Basic Translation
+**Controller Integration:**
 ```php
-// Controller injection
+use Symfony\Contracts\Translation\TranslatorInterface;
+
 public function index(TranslatorInterface $translator): Response
 {
-    $translated = $translator->trans('Hello World');
-    $withParams = $translator->trans('Hello %name%', ['%name%' => $user->getName()]);
-    $withDomain = $translator->trans('Hello World', [], 'messages');
-    $withLocale = $translator->trans('Hello World', [], 'messages', 'fr');
+    $translated = $translator->trans('message.key');
+    $withParams = $translator->trans('welcome.message', ['%name%' => $user->getName()]);
+    $withDomain = $translator->trans('admin.title', domain: 'admin');
+    $withLocale = $translator->trans('message', locale: 'fr');
 }
 ```
 
-### Translatable Objects (Recommended for Services)
-```php
-use Symfony\Component\Translation\TranslatableMessage;
-
-// Create translatable object (delays translation)
-$message = new TranslatableMessage('Hello %name%', ['%name%' => $name], 'domain');
-
-// Use in templates
-// {{ message|trans }}
-
-// Shortcut function
-$message = t('Hello %name%', ['%name%' => $name], 'domain');
+**Twig Integration:**
+```twig
+{{ 'message.key'|trans }}
+{{ 'welcome.message'|trans({'%name%': user.name}) }}
+{{ 'admin.title'|trans({}, 'admin') }}
+{% trans %}Hello World{% endtrans %}
+{% trans with {'%name%': user.name} %}Hello %name%{% endtrans %}
 ```
 
-## Translation Files
+### File Formats and Structure
 
-### File Naming Convention
-`domain.locale.loader`
-- `messages.fr.yaml` (default domain, French, YAML format)
-- `validators.en.xlf` (validators domain, English, XLIFF format)
+**File Naming Convention:** `domain.locale.format`
 
-### File Locations (Priority Order)
-1. `translations/` (project root)
-2. Bundle `translations/` directories
-3. Custom paths via `framework.translator.paths`
-
-### Supported Formats
-- `.yaml/.yml` - YAML (recommended for simple projects)
-- `.xlf/.xliff` - XLIFF (recommended for teams/translation services)
-- `.php` - PHP arrays
-- `.csv`, `.json`, `.ini`, `.dat`, `.res`, `.mo`, `.po`, `.qt`
-
-### Translation File Examples
-
-**YAML (nested keys supported)**:
+**YAML Format (Recommended):**
 ```yaml
 # translations/messages.fr.yaml
-Hello World: Bonjour le monde
-user:
-    login: Connexion
-    logout: Déconnexion
-    profile:
-        edit: Modifier le profil
+message.key: Message traduit
+welcome.message: Bienvenue %name%
+nested:
+    key: Valeur imbriquée
 ```
 
-**XLIFF**:
+**XLIFF Format:**
 ```xml
 <!-- translations/messages.fr.xlf -->
-<?xml version="1.0" encoding="UTF-8" ?>
-<xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2">
-    <file source-language="en" datatype="plaintext" original="file.ext">
-        <body>
-            <trans-unit id="hello_world">
-                <source>Hello World</source>
-                <target>Bonjour le monde</target>
-            </trans-unit>
-        </body>
-    </file>
-</xliff>
+<trans-unit id="message_key">
+    <source>message.key</source>
+    <target>Message traduit</target>
+</trans-unit>
 ```
 
-**PHP Arrays**:
+**PHP Format:**
 ```php
 // translations/messages.fr.php
 return [
-    'Hello World' => 'Bonjour le monde',
-    'user' => [
-        'login' => 'Connexion', // nested key: user.login
-    ],
+    'message.key' => 'Message traduit',
+    'welcome.message' => 'Bienvenue %name%',
 ];
 ```
 
-## Template Translation
+### Locale Management
 
-### Twig Filters
-```twig
-{# Basic translation #}
-{{ message|trans }}
-{{ message|trans({'%name%': user.name}, 'app') }}
-
-{# Set domain for entire template #}
-{% trans_default_domain 'app' %}
-
-{# Escape HTML (default behavior with filter) #}
-{{ message|trans|raw }}
-```
-
-### Twig Tags
-```twig
-{# Static blocks (no auto-escaping) #}
-{% trans %}Hello %name%{% endtrans %}
-{% trans with {'%name%': user.name} from 'app' %}Hello %name%{% endtrans %}
-{% trans with {'%name%': user.name} from 'app' into 'fr' %}Hello %name%{% endtrans %}
-
-{# Escape percent signs #}
-{% trans %}Progress: %progress%%%{% endtrans %}
-```
-
-## Locale Management
-
-### Setting Locale
-```php
-// In controller/listener (before LocaleListener)
-$request->setLocale($locale);
-
-// Direct on translator (late binding)
-$translator->setLocale($locale);
-
-// URL-based locale (automatic)
-// Route: /{_locale}/contact
-// URL: /fr/contact -> locale = 'fr'
-```
-
-### Route Configuration
-```php
-// Attributes
-#[Route(path: '/{_locale}/contact', requirements: ['_locale' => 'en|fr|de'])]
-
-// YAML
-contact:
-    path: /{_locale}/contact
-    controller: App\Controller\ContactController::contact
+**URL-Based Locale Setting:**
+```yaml
+# config/routes.yaml
+homepage:
+    path: /{_locale}/homepage
     requirements:
         _locale: en|fr|de
 ```
 
-### Locale Switcher (7.3+)
+**Programmatic Locale Management:**
 ```php
 use Symfony\Component\Translation\LocaleSwitcher;
 
-class SomeService
+class LocaleController
 {
-    public function __construct(private LocaleSwitcher $localeSwitcher) {}
-
-    public function method(): void
+    public function switchLocale(LocaleSwitcher $localeSwitcher, string $locale): Response
     {
-        $current = $this->localeSwitcher->getLocale();
-        
-        // Change locale temporarily
-        $this->localeSwitcher->setLocale('fr');
-        
-        // Reset to default
-        $this->localeSwitcher->reset();
-        
-        // Execute code with specific locale
-        $this->localeSwitcher->runWithLocale('es', function(string $locale) {
-            // Code executed with 'es' locale
-        });
+        $localeSwitcher->setLocale($locale);
+        return $this->redirectToRoute('homepage');
     }
 }
 ```
 
-### Preferred Language Detection
+### Advanced Features
+
+**Message Placeholders:**
 ```php
-$request = $this->requestStack->getCurrentRequest();
-$locale = $request->getPreferredLanguage(['pt', 'fr', 'en']);
+$translator->trans('user.greeting', [
+    '%username%' => $user->getUsername(),
+    '%count%' => $messageCount
+]);
 ```
 
-## Translation Fallback
+**Translatable Objects:**
+```php
+use Symfony\Contracts\Translation\TranslatableInterface;
 
-**Fallback Chain Example** (locale: `es_AR`):
-1. `es_AR` (Argentinean Spanish)
-2. `es_419` (Latin American Spanish) - auto-parent
-3. `es` (Spanish)
-4. Configured fallbacks (`en`)
-5. Default locale
+class TranslatableMessage implements TranslatableInterface
+{
+    public function trans(TranslatorInterface $translator, string $locale = null): string
+    {
+        return $translator->trans($this->message, $this->parameters, $this->domain, $locale);
+    }
+}
+```
 
-## Global Translation Parameters (7.3+)
-
-### Configuration
+**ICU MessageFormat:**
 ```yaml
-# config/packages/translation.yaml
-framework:
-    translator:
-        globals:
-            '%%app_name%%': 'My App'      # %% escaping required
-            '{app_version}': '2.1.0'
-            '{url}': 
-                message: 'base_url'
-                parameters: {scheme: 'https://'}
-                domain: 'global'
+# translations/messages.en.yaml
+notification.count: |
+    {count, plural,
+        =0 {No notifications}
+        one {One notification}
+        other {# notifications}
+    }
 ```
 
-### Usage
-```twig
-{{ 'App: %%app_name%% v{app_version}'|trans }}
-{# Output: "App: My App v2.1.0" #}
+### Translation Commands
 
-{# Override globals #}
-{{ 'Version: {app_version}'|trans({'{app_version}': '3.0.0'}) }}
-```
-
-## CLI Commands
-
-### Extract Translations
+**Extract Translatable Messages:**
 ```bash
-# Show missing translations
 php bin/console translation:extract --dump-messages fr
-
-# Update translation files
-php bin/console translation:extract --force fr
-
-# Custom prefix for new entries
-php bin/console translation:extract --force --prefix="TODO_" fr
-
-# Leave new entries empty
-php bin/console translation:extract --force --no-fill fr
+php bin/console translation:extract --force fr  # Update files
 ```
 
-### Debug Translations
+**Debug Translations:**
 ```bash
-# Check all translations for locale
-php bin/console debug:translation fr
-
-# Specific domain
-php bin/console debug:translation fr --domain=messages
-
-# Only show issues
-php bin/console debug:translation fr --only-missing
-php bin/console debug:translation fr --only-unused
+php bin/console debug:translation fr  # All translations for French
+php bin/console debug:translation fr AppBundle  # Specific domain
+php bin/console debug:translation --only-missing fr  # Missing only
+php bin/console debug:translation --only-unused fr   # Unused only
 ```
 
-**Exit codes**: `TranslationDebugCommand::EXIT_CODE_*`
-- `GENERAL_ERROR`: Generic failure
-- `MISSING`: Missing translations
-- `UNUSED`: Unused translations  
-- `FALLBACK`: Using fallback translations
-
-### Lint Translation Files
+**Lint Translation Files:**
 ```bash
-# Validate syntax
-php bin/console lint:yaml translations/
-php bin/console lint:xliff translations/
-
-# Validate content (7.2+)
 php bin/console lint:translations
-php bin/console lint:translations --locale=fr --locale=de
+php bin/console lint:translations fr
 ```
 
-## Translation Providers
+### Translation Providers
 
-### Supported Providers
-| Provider | Package | DSN Format |
-|----------|---------|------------|
-| Crowdin | `symfony/crowdin-translation-provider` | `crowdin://PROJECT_ID:API_TOKEN@ORGANIZATION.default` |
-| Loco | `symfony/loco-translation-provider` | `loco://API_KEY@default` |
-| Lokalise | `symfony/lokalise-translation-provider` | `lokalise://PROJECT_ID:API_KEY@default` |
-| Phrase | `symfony/phrase-translation-provider` | `phrase://PROJECT_ID:API_TOKEN@default?userAgent=myProject` |
-
-### Configuration
+**Configuration for External Services:**
 ```yaml
 # config/packages/translation.yaml
 framework:
     translator:
         providers:
-            loco:
-                dsn: '%env(LOCO_DSN)%'
-                domains: ['messages', 'validators']
-                locales: ['en', 'fr', 'de']
+            crowdin:
+                dsn: 'crowdin://PROJECT_ID:API_TOKEN@default'
+            lokalise:
+                dsn: 'lokalise://PROJECT_ID:API_TOKEN@default'
 ```
 
-### Push/Pull Commands
+**Provider Commands:**
 ```bash
-# Push translations to provider
-php bin/console translation:push loco --force
-php bin/console translation:push loco --locales fr --domains validators
-
-# Pull translations from provider
-php bin/console translation:pull loco --force
-php bin/console translation:pull loco --locales fr --domains validators --as-tree
+php bin/console translation:push crowdin  # Push to provider
+php bin/console translation:pull crowdin  # Pull from provider
 ```
 
-## Message Format (ICU)
+### Testing with Pseudo-localization
 
-Symfony supports ICU MessageFormat for complex translations:
-
-```php
-// Pluralization
-$translator->trans('There {count, plural, =0{are no apples} one{is one apple} other{are # apples}}', ['count' => 5]);
-
-// Choice/Select
-$translator->trans('Hello {gender, select, male{Mr.} female{Ms.} other{}}', ['gender' => 'male']);
-```
-
-## Best Practices
-
-### Message Keys Strategy
-**Real Messages** (good for simple apps):
-```php
-$translator->trans('Symfony is great');
-// translations/messages.fr.yaml: 'Symfony is great': 'Symfony est génial'
-```
-
-**Keyword Messages** (recommended for complex apps):
-```php
-$translator->trans('app.welcome');
-// translations/messages.fr.yaml: 'app.welcome': 'Bienvenue'
-```
-
-### Performance Tips
-- Use YAML for development, XLIFF for production
-- Enable `enabled_locales` to restrict supported locales
-- Use `nikic/php-parser` for better extraction results
-- Clear cache after adding new translation catalogs
-
-### Extraction Targets
-The `translation:extract` command scans:
-- Templates in `templates/` directory
-- PHP files injecting `TranslatorInterface`
-- PHP files using `TranslatableMessage` or `t()` function
-- Validation constraint messages with `*message` arguments
-
-## Pseudo-localization (Development)
-
+**Enable Pseudo-localization:**
 ```yaml
-# config/packages/translation.yaml (dev environment)
+# config/packages/translation.yaml
 framework:
     translator:
         pseudo_localization:
-            accents: true              # Àççôûñţ Šéţţîñĝš
-            brackets: true             # [!!! text !!!]
-            expansion_factor: 1.4      # Make text longer
-            parse_html: true           # Preserve HTML tags
-            localizable_html_attributes: ['title', 'alt']
+            enabled: true
+            accents: true
+            expansion_factor: 1.3
+            brackets: true
 ```
 
-## Cross-References
+**Testing Commands:**
+```bash
+php bin/console translation:extract --dump-messages pseudo  # Generate pseudo translations
+```
 
-### Related Symfony Components
-- **Validation**: Uses translation for constraint messages
-- **Form**: Form labels and validation messages  
-- **Security**: Authentication/authorization messages
-- **Console**: Command help and error messages
+### Performance Optimization
+
+**Translation Caching:**
+```yaml
+# config/packages/translation.yaml (prod)
+framework:
+    translator:
+        cache_dir: '%kernel.cache_dir%/translations'
+```
+
+**Resource Loading Optimization:**
+```php
+// Load specific domains only
+$translator->getCatalogue('fr')->getDomains();  // Get available domains
+```
+
+### Common Patterns
+
+**Domain-Specific Translations:**
+- `messages`: General application messages
+- `validators`: Form validation messages  
+- `security`: Authentication/authorization messages
+- `admin`: Admin interface messages
+
+**Key Naming Strategies:**
+- Dot notation: `user.profile.title`
+- Descriptive keys: `button.save`, `error.invalid_email`
+- Avoid spaces and special characters in keys
 
 ### Integration Points
-- Templates: `trans` filter and tags
-- Validators: `message` parameter translation
-- Forms: Automatic label translation
-- Flash messages: Manual translation in controllers
+
+**Form Integration:**
+```php
+$form = $this->createForm(UserType::class, $user, [
+    'translation_domain' => 'forms'
+]);
+```
+
+**Validation Messages:**
+```php
+use Symfony\Component\Validator\Constraints as Assert;
+
+class User
+{
+    #[Assert\NotBlank(message: 'user.name.required')]
+    private string $name;
+}
+```
+
+**Event Integration:**
+```php
+use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use Symfony\Component\HttpKernel\Event\RequestEvent;
+
+class LocaleSubscriber implements EventSubscriberInterface
+{
+    public function onKernelRequest(RequestEvent $event): void
+    {
+        $request = $event->getRequest();
+        if ($locale = $request->attributes->get('_locale')) {
+            $request->getSession()->set('_locale', $locale);
+        }
+    }
+}
+```

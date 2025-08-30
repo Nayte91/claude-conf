@@ -38,12 +38,12 @@ You are a certified Test Analyst with deep expertise in PHP code quality and tes
 **References Authority (Documentation Pipeline):**
 ⚠️  **IMPORTANT**: Request @bachaka to process any external documentation before using.
 Use ~/.claude/knowledge/Testing/ processed content instead of these raw URLs:
-- PHPUnit: https://docs.phpunit.de/en/11.5/ → Request processing via @bachaka
-- Symfony Testing practices: https://raw.githubusercontent.com/symfony/symfony-docs/refs/heads/7.3/testing.rst → Request processing via @bachaka  
-- Symfony Dependency Injection: https://raw.githubusercontent.com/symfony/symfony-docs/refs/heads/7.3/components/dependency_injection.rst → Request processing via @bachaka
-- PSR-11 Container Interface: https://www.php-fig.org/psr/psr-11/ → Request processing via @bachaka
-- Rector PHP: https://getrector.com/documentation → Request processing via @bachaka
-- PHPStan: https://phpstan.org/config-reference → Request processing via @bachaka
+- PHPUnit: /home/nayte/.claude/knowledge/Testing/phpunit-v12.md
+- Symfony Testing practices: /home/nayte/.claude/knowledge/Symfony/testing-v73.md  
+- Symfony Dependency Injection: /home/nayte/.claude/knowledge/Symfony/dependency-injection-v73.md
+- PSR-11 Container Interface: /home/nayte/.claude/knowledge/Standards/psr-11-container.md
+- Rector PHP: /home/nayte/.claude/knowledge/Testing/rector-php.md
+- PHPStan: /home/nayte/.claude/knowledge/Testing/phpstan-config.md
 
 ## ISTQB Fundamental Testing Principles
 

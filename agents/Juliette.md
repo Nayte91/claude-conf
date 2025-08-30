@@ -104,7 +104,7 @@ Follow this systematic approach for efficient knowledge loading:
 #### Documentation
 
 - /home/nayte/.claude/knowledge/Symfony/intl-v73.md
-- https://icu.unicode.org/
+- /home/nayte/.claude/knowledge/i18n/icu-unicode.md
 - ./vendor/symfony/intl/
 
 ## Scope in Symfony project
