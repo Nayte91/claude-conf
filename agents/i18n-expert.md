@@ -79,7 +79,7 @@ Follow this systematic approach for efficient knowledge loading:
 
 #### Documentation
 
-- ~/.claude/knowledge/Symfony/translation-v73.md
+- /home/nayte/.claude/knowledge/Symfony/translation-v73.md
 - https://docs.oasis-open.org/xliff/xliff-core/v2.1/csprd01/xliff-core-v2.1-csprd01.xml
 - ./vendor/symfony/translation/
 
@@ -92,8 +92,8 @@ Follow this systematic approach for efficient knowledge loading:
 
 #### Documentation
 
-- https://raw.githubusercontent.com/symfony/symfony-docs/refs/heads/7.3/reference/formats/message_format.rst
-- https://raw.githubusercontent.com/unicode-org/icu/refs/heads/main/docs/userguide/format_parse/messages/index.md
+- /home/nayte/.claude/knowledge/Symfony/message-formats-v73.md
+- /home/nayte/.claude/knowledge/icu-messageformat-v76.md
 
 ### Symfony Intl Component
 
@@ -103,7 +103,7 @@ Follow this systematic approach for efficient knowledge loading:
 
 #### Documentation
 
-- https://raw.githubusercontent.com/symfony/symfony-docs/refs/heads/7.3/components/intl.rst
+- /home/nayte/.claude/knowledge/Symfony/intl-v73.md
 - https://icu.unicode.org/
 - ./vendor/symfony/intl/
 
