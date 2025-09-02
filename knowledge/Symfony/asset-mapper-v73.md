@@ -1,85 +1,109 @@
 ## Header
-- **Source URL**: https://raw.githubusercontent.com/symfony/symfony-docs/refs/heads/7.3/frontend/asset_mapper.rst
-- **Processed Date**: 2025-01-25
-- **Domain**: symfony/symfony-docs
+- **Source**: https://raw.githubusercontent.com/symfony/symfony-docs/refs/heads/7.3/frontend/asset_mapper.rst
+- **Processed Date**: 2025-09-01
+- **Domain**: symfony.com
 - **Version**: v73
-- **Weight Reduction**: ~43%
-- **Key Sections**: Asset Mapping, Importmaps, Configuration, Compilation, Performance, CSS/JS Processing, Security
+- **Weight Reduction**: ~65%
+- **Key Sections**: v7.3 Configuration, Console Commands, Twig Integration, Security Features
 
 ## Body
 
-### Core Capabilities
-- **Native browser module support** without bundling
-- **Direct file serving** with versioning
-- **Automatic asset mapping** and importmap generation
-- **Performance-optimized** asset management
+### Symfony 7.3 AssetMapper Installation
 
-### Key Technical Mechanisms
-
-#### 1. Asset Mapping
-- **Scans directories**: (default: `assets/`)
-- **Generates versioned URLs** with content hash
-- **Supports references**: relative and absolute asset references
-- **Automatic path resolution** across JavaScript/CSS
-
-#### 2. Importmap Processing
-- **Native browser `import`** statement support
-- **Automatic module discovery** and mapping
-- **Polyfill support** for legacy browsers
-- **Dynamic import handling** with shim support
-
-#### 3. Configuration Patterns
-```yaml
-framework:
-  asset_mapper:
-    paths:
-      - assets/
-      - vendor/package/assets
-    excluded_patterns:
-      - '*/*.scss'
-    importmap_polyfill: 'es-module-shims'
+```bash
+composer require symfony/asset-mapper
 ```
 
-#### 4. Compilation Strategies
-**Development**: Dynamic asset serving
-**Production**:
-- **`asset-map:compile`** command
-- **Static asset generation**
-- **Versioned file output**
-- **Manifest generation**
+### Symfony 7.3 Configuration Options
 
-#### 5. Performance Optimization
-- **HTTP/2** parallel asset loading
-- **Preloading** critical assets
-- **Compression support**: Brotli, Zstandard, gzip
-- **Content hash-based** caching
+```yaml
+# config/packages/framework.yaml
+framework:
+    asset_mapper:
+        paths:
+            - assets/
+        excluded_patterns:
+            - '*/*.scss'
+        public_prefix: /assets
+        server: 'importmap-preload'  # v7.3: Preload support
+        strict_mode: true            # v7.3: Import validation
+        compression:
+            brotli: true             # v7.3: Brotli compression
+            zstandard: true          # v7.3: Zstandard compression
+            gzip: true
+        csp:
+            script_src_self: true    # v7.3: CSP integration
+            script_src_data: false
+```
 
-#### 6. CSS/JS Processing
-- **Direct CSS import** from JavaScript
-- **Third-party package** integration
-- **Automatic dependency tracking**
-- **Lazy loading support**
+### Symfony 7.3 Console Commands
 
-#### 7. Security Considerations
-- **Content Security Policy (CSP)** compatibility
-- **Dependency vulnerability** scanning
-- **Nonce support** for script execution
+```bash
+# Package management (v7.3 specific)
+php bin/console importmap:require bootstrap
+php bin/console importmap:require @hotwired/stimulus
+php bin/console importmap:remove package
+php bin/console importmap:list
+php bin/console importmap:info bootstrap
+php bin/console importmap:audit       # v7.3: Security auditing
 
-### Recommended Implementation Workflow
-1. **Define asset paths**
-2. **Configure importmap**
-3. **Implement asset references**
-4. **Optimize for production**
-5. **Implement security measures**
+# Asset compilation (v7.3)
+php bin/console asset-map:compile
 
-### Critical Configuration Directives
-- **Specify asset paths**
-- **Define exclusion patterns**
-- **Configure importmap polyfill**
-- **Set compression strategies**
+# Debugging (v7.3)
+php bin/console debug:asset-map
+php bin/console debug:asset-map app.js
+```
 
-### Emerging Best Practices
-- **Minimize build complexity**
-- **Leverage native browser capabilities**
-- **Implement granular asset management**
-- **Prioritize performance optimization**
+### Symfony 7.3 Twig Functions
+
+```twig
+{# Import map rendering with v7.3 options #}
+{{ importmap('app') }}
+{{ importmap('app', {preload: true}) }}
+{{ importmap('app', {preload: false}) }}
+
+{# Asset preloading (v7.3 feature) #}
+{{ preload(asset('app.js'), { as: 'script' }) }}
+{{ preload(asset('styles/critical.css'), { as: 'style' }) }}
+```
+
+### Symfony 7.3 Asset Processor Interface
+
+```php
+// v7.3 AssetProcessorInterface implementation
+class CustomAssetProcessor implements AssetProcessorInterface
+{
+    public function process(MappedAsset $asset): void
+    {
+        // v7.3 asset processing logic
+    }
+}
+```
+
+### Symfony 7.3 Import Map Structure
+
+```html
+<script type="importmap">{
+    "imports": {
+        "bootstrap": "/assets/bootstrap-abc123.js",
+        "@hotwired/stimulus": "/assets/stimulus-def456.js"
+    }
+}</script>
+```
+
+### Symfony 7.3 Security Features
+
+**v7.3 Security Auditing**:
+```bash
+php bin/console importmap:audit  # Check vulnerabilities
+```
+
+**v7.3 CSP Configuration**:
+```yaml
+framework:
+    asset_mapper:
+        csp:
+            script_src_self: true
+            script_src_data: false
+```

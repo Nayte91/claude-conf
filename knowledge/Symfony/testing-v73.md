@@ -1,5 +1,5 @@
 ## Header
-- **Source URL**: https://raw.githubusercontent.com/symfony/symfony-docs/refs/heads/7.3/testing.rst
+- **Source**: https://raw.githubusercontent.com/symfony/symfony-docs/refs/heads/7.3/testing.rst
 - **Processed Date**: 2025-01-25
 - **Domain**: symfony/symfony-docs
 - **Version**: v73
@@ -8,69 +8,117 @@
 
 ## Body
 
-### Test Types and Architecture
+### Symfony 7.3 Test Classes
 
-#### 1. Unit Tests
-- **Validate individual code units** (classes/methods)
-- **Isolated testing** of specific functionality
-- **Location**: matching directory structure (e.g. `tests/Form/` mirrors `src/Form/`)
+#### KernelTestCase (7.3)
+```php
+use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
-#### 2. Integration Tests
-- **Test service interactions** and container dependencies
-- **Use `KernelTestCase`** for kernel bootstrapping
-- **Access services** via `static::getContainer()`
+class ServiceTest extends KernelTestCase
+{
+    protected function setUp(): void
+    {
+        self::bootKernel();
+        $this->container = static::getContainer();
+    }
+}
+```
 
-#### 3. Functional/Application Tests
-- **Simulate complete application** workflow
-- **Use `WebTestCase`** for browser simulation
-- **Test routing, controllers**, and full request/response cycles
+#### WebTestCase (7.3)
+```php
+use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
-### Core Testing Configuration
-- **Install**: `composer require --dev symfony/test-pack`
-- **PHPUnit configured** through `phpunit.dist.xml`
-- **Test environment isolated** via `.env.test`
+class ControllerTest extends WebTestCase
+{
+    public function testRoute(): void
+    {
+        $client = static::createClient();
+        $client->request('GET', '/path');
+        $this->assertResponseIsSuccessful();
+    }
+}
+```
 
-### Database Testing Strategies
+### Database Testing (Symfony 7.3)
 
-#### 1. Dedicated Test Database
-- **Create separate database** for tests
-- **Configure** via `DATABASE_URL` in `.env.test.local`
-- **Use**: `doctrine:database:create --env=test`
+#### DAMA Doctrine Bundle
+```yaml
+# config/packages/test/dama_doctrine_test_bundle.yaml
+dama_doctrine_test_bundle:
+    enable_static_connection: true
+    enable_static_meta_data_cache: true
+```
 
-#### 2. Transaction Isolation
-- **Use `DAMADoctrineTestBundle`** for automatic rollbacks
-- **Prevents test interdependencies**
+#### Test Database Configuration
+```env
+# .env.test
+DATABASE_URL="sqlite:///%kernel.project_dir%/var/test.db"
+```
 
-#### 3. Fixtures Management
-- **Load test data** using `doctrine/doctrine-fixtures-bundle`
-- **Create fixture classes** to populate test database
+### Authentication Testing (7.3)
 
-### Authentication Testing
-- **Use `$client->loginUser()`** for simulated authentication
-- **Create dedicated test users**
-- **Support**: in-memory and repository-based user loading
+```php
+public function testAuthenticatedUser(): void
+{
+    $client = static::createClient();
+    $user = $this->entityManager->find(User::class, 1);
+    $client->loginUser($user);
+    
+    $client->request('GET', '/profile');
+    $this->assertResponseIsSuccessful();
+}
+```
 
-### Request/Response Testing
+### HTTP Testing Assertions (7.3)
 
-#### Key Assertions
-- **`assertResponseIsSuccessful()`**
-- **`assertResponseStatusCodeSame()`**
-- **`assertResponseRedirects()`**
-- **`assertSelectorExists()`**
-- **`assertSelectorTextContains()`**
+```php
+// Response status
+$this->assertResponseIsSuccessful();
+$this->assertResponseStatusCodeSame(404);
+$this->assertResponseRedirects('/login');
 
-### Advanced Testing Techniques
+// DOM content
+$this->assertSelectorExists('form[name="user"]');
+$this->assertSelectorTextContains('h1', 'Welcome');
 
-#### 1. Mocking Dependencies
-- **Replace service implementations** dynamically
-- **Use `$this->createMock()`** for dependency substitution
+// JSON responses
+$this->assertJsonContains(['status' => 'ok']);
+$this->assertJsonEquals(['data' => []]);
+```
 
-#### 2. HTTP Client Testing
-- **Enable profiler** with `$client->enableProfiler()`
-- **Assert HTTP request characteristics**
-- **Validate external service** interactions
+### Service Container Testing (7.3)
 
-### Performance Optimization
-- **Disable kernel reboot** for multi-request tests
-- **Use compiler passes** to optimize service reset
-- **Configure test environment** for optimal performance
+```php
+protected function setUp(): void
+{
+    self::bootKernel();
+    $this->service = static::getContainer()->get(MyService::class);
+}
+
+// Service mocking
+$mockService = $this->createMock(ExternalService::class);
+static::getContainer()->set(ExternalService::class, $mockService);
+```
+
+### Profiler Integration (7.3)
+
+```php
+$client = static::createClient();
+$client->enableProfiler();
+$client->request('GET', '/send-email');
+
+$mailCollector = $client->getProfile()->getCollector('swiftmailer');
+$this->assertEmailCount(1);
+```
+
+### Test Environment Configuration
+
+```yaml
+# config/packages/test/framework.yaml
+framework:
+    test: true
+    session:
+        storage_factory_id: session.storage.factory.mock_file
+    profiler:
+        enabled: false
+```

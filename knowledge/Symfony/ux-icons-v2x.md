@@ -1,5 +1,5 @@
 ## Header
-- **Source URL**: https://raw.githubusercontent.com/symfony/ux/refs/heads/2.x/src/Icons/doc/index.rst
+- **Source**: https://raw.githubusercontent.com/symfony/ux/refs/heads/2.x/src/Icons/doc/index.rst
 - **Processed Date**: 2025-01-25
 - **Domain**: symfony/ux
 - **Version**: v2x
@@ -8,66 +8,111 @@
 
 ## Body
 
-### Core Capabilities
-- **SVG icon rendering** across Symfony applications
-- **Access to 200,000+ vector icons** from multiple icon sets
-- **Local and remote** icon integration
-- **Twig and HTML** component support
+### UX Icons 2.x Configuration
 
-### Key Technical Features
-
-#### 1. Icon Rendering Mechanisms
-- **Function**: `ux_icon('icon_name')`
-- **HTML Component**: `<twig:ux:icon name="icon_name" />`
-- **Sources**: Local and remote icon support
-- **Accessibility**: Automatic attribute management
-
-#### 2. Configuration Options
 ```yaml
+# config/packages/ux_icons.yaml
 ux_icons:
     icon_dir: '%kernel.project_dir%/assets/icons'
     default_icon_attributes:
-        fill: currentColor
+        fill: 'currentColor'
+        'aria-hidden': 'true'
     aliases:
-        dots: 'clarity:ellipsis-horizontal-line'
+        menu: 'heroicons:bars-3'
+        close: 'heroicons:x-mark'
     ignore_not_found: false
 ```
 
-#### 3. Icon Source Management
-- **Local directory**: `assets/icons/`
-- **On-demand retrieval**: via Iconify API
-- **Import commands**: for locking icons
-- **Caching mechanisms**: for performance
+### Icon Rendering Methods
 
-#### 4. Performance Optimizations
-- **Icon file caching**
-- **Pre-warming cache** via CLI
-- **Reduced TwigComponent overhead**
-- **Dynamic icon name resolution limitations**
-
-#### 5. Iconify Integration
-- **Optional on-demand** icon retrieval
-- **Configurable API endpoint**
-- **Extensive icon set support**
-
-#### 6. Accessibility Handling
-- **Automatic `aria-hidden`** management
-- **Support for**: informative, functional, and decorative icons
-- **Customizable screen reader** attributes
-
-### Installation
-```bash
-composer require symfony/ux-icons
-composer require symfony/http-client  # For on-demand icons
+#### Twig Function
+```twig
+{{ ux_icon('heroicons:home') }}
+{{ ux_icon('local-icon', {class: 'w-6 h-6'}) }}
 ```
 
-### Key CLI Commands
-- **`ux:icons:search`**: Find icon sets
-- **`ux:icons:import`**: Download specific icons
-- **`ux:icons:lock`**: Import all used on-demand icons
-- **`ux:icons:warm-cache`**: Preload icon cache
+#### HTML Component Syntax (2.x)
+```twig
+<twig:ux:icon name="heroicons:home" class="text-blue-500" />
+<twig:ux:icon name="local-icon" :name="dynamicIconName" />
+```
 
-### Technical Constraints
-- **Icon names**: must match `[a-z0-9-]+(-[a-z0-9])+` pattern
-- **Dynamic names**: won't cache properly
-- **Advanced scenarios**: require explicit configuration
+### Icon Sources
+
+#### Local Icons
+- **Directory**: `assets/icons/*.svg`
+- **Naming**: Files named `icon-name.svg`
+- **Usage**: `ux_icon('icon-name')`
+
+#### Iconify Integration
+- **Pattern**: `{collection}:{icon-name}`
+- **On-demand**: Auto-downloaded from Iconify API
+- **Caching**: Downloaded icons cached locally
+
+### CLI Commands (2.x)
+
+```bash
+# Search available icons
+php bin/console ux:icons:search heroicons home
+
+# Import specific icons  
+php bin/console ux:icons:import heroicons:home heroicons:user
+
+# Lock all on-demand icons (production)
+php bin/console ux:icons:lock
+
+# Warm icon cache
+php bin/console ux:icons:warm-cache
+```
+
+### Accessibility Features
+
+#### Automatic Attributes
+```twig
+{# Decorative icon - auto aria-hidden #}
+{{ ux_icon('heroicons:home') }}
+{# Renders: <svg aria-hidden="true">... #}
+
+{# Informative icon - with label #}
+{{ ux_icon('heroicons:home', {'aria-label': 'Home page'}) }}
+{# Renders: <svg aria-label="Home page">... #}
+```
+
+#### Role Configuration
+```yaml
+ux_icons:
+    default_icon_attributes:
+        role: 'img'
+        'aria-hidden': 'false'  # Override for informative icons
+```
+
+### Performance Characteristics
+
+- **Local icons**: Direct file read, fastest
+- **Cached Iconify**: Single HTTP request, cached indefinitely
+- **Dynamic names**: No pre-warming possible, runtime resolution
+- **Bundle overhead**: ~10KB for icon resolution logic
+
+### Icon Name Patterns
+
+#### Valid Formats
+- **Iconify**: `collection:icon-name` (e.g., `heroicons:home`)
+- **Local**: `icon-name` (matches filename without .svg)
+- **Aliases**: Custom names from configuration
+
+#### Naming Constraints
+- **Collection names**: Lowercase, hyphens allowed
+- **Icon names**: Lowercase, hyphens/numbers allowed
+- **Dynamic resolution**: Variables work but disable caching
+
+### Production Optimizations
+
+```bash
+# Lock all icons before deployment
+php bin/console ux:icons:lock
+
+# Disable on-demand in production
+# config/packages/prod/ux_icons.yaml
+ux_icons:
+    ignore_not_found: true  # Throw errors for missing icons
+```

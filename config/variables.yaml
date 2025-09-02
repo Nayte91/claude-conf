@@ -1,0 +1,32 @@
+---
+# Global Variables Configuration
+# Used by agents for dynamic path resolution and configuration
+version: "1.0"
+updated: "2025-09-01"
+
+# Base paths
+base_path: "/home/nayte/.claude"
+knowledge_dir: "/home/nayte/.claude/knowledge"
+agents_dir: "/home/nayte/.claude/agents"
+config_dir: "/home/nayte/.claude/config"
+
+# Knowledge base paths
+symfony_docs: "${knowledge_dir}/Symfony"
+doctrine_docs: "${knowledge_dir}/Doctrine"
+
+# External URLs - Symfony 7.3
+symfony_docs_base: "https://raw.githubusercontent.com/symfony/symfony-docs/refs/heads/7.3"
+symfony_docs_rst: "${symfony_docs_base}"
+
+# External URLs - Doctrine ORM 3.5
+doctrine_docs_base: "https://raw.githubusercontent.com/doctrine/orm/3.5.x/docs"
+doctrine_docs_rst: "${doctrine_docs_base}"
+
+# Cache and temporary paths
+cache_dir: "${base_path}/.cache"
+temp_dir: "/tmp/claude-agents"
+
+# Agent configuration
+default_weight_reduction: 0.42
+optimization_level: "enhanced"
+filter_pre_training: true

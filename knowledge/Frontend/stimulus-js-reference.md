@@ -1,5 +1,5 @@
 ## Header
-- **Source URL**: https://stimulus.hotwired.dev/reference
+- **Source**: https://stimulus.hotwired.dev/reference
 - **Processed Date**: 2025-01-25
 - **Domain**: stimulus.hotwired.dev
 - **Version**: Latest

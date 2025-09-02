@@ -1,5 +1,5 @@
 ## Header
-- **Source URL**: https://icu.unicode.org/
+- **Source**: https://icu.unicode.org/
 - **Processed Date**: 2025-01-25
 - **Domain**: icu.unicode.org
 - **Version**: Latest

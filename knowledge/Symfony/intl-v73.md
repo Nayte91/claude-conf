@@ -1,187 +1,154 @@
-# Symfony Intl Component v73 - Agent Reference
+## Header
+- **Source**: https://raw.githubusercontent.com/symfony/symfony-docs/refs/heads/7.3/components/intl.rst
+- **Processed Date**: 2025-09-01
+- **Domain**: symfony.com
+- **Version**: v7.3
+- **Weight Reduction**: ~85%
+- **Key Sections**: v7.3 Core Classes, API Methods, ICU Integration, Validation Patterns
 
-## Metadata
-- **Source URL**: https://raw.githubusercontent.com/symfony/symfony-docs/refs/heads/7.3/components/intl.rst
-- **Processed Date**: 2025-08-29
-- **Requesting Agent**: Documentation Chewer
-- **Domain**: Symfony/Internationalization
-- **Version**: 7.3
-- **Weight Reduction**: ~70% (core technical extraction)
-- **Key Sections**: Core Classes, Locale Data Access, ICU Integration, Practical Usage
+## Body
 
-## Installation & Requirements
+### Symfony 7.3 Intl Installation
 
 ```bash
 composer require symfony/intl
+# Requires: PHP Intl extension with ICU library
 ```
 
-**Dependencies**: PHP Intl extension with ICU library
+### Symfony 7.3 Languages Class
 
-## Core Classes & Capabilities
-
-### 1. Languages Class
 ```php
 use Symfony\Component\Intl\Languages;
 
-// Get all language names for locale
+// v7.3 Languages API
 $languages = Languages::getNames($locale = 'en');
-$languages = Languages::getNames('fr'); // Returns French language names
+$languages = Languages::getNames('fr');
 
-// Get specific language name
 $name = Languages::getName('fr');        // "French"
 $name = Languages::getName('fr', 'fr');  // "français"
 
-// Code conversion
 $alpha3 = Languages::getAlpha3Code('fr'); // "fra"
 $alpha2 = Languages::getAlpha2Code('fra'); // "fr"
 
-// Validation
 $exists = Languages::exists('fr');       // true
 ```
 
-### 2. Countries Class
+### Symfony 7.3 Countries Class
+
 ```php
 use Symfony\Component\Intl\Countries;
 
-// Get all country names
+// v7.3 Countries API
 $countries = Countries::getNames($locale = 'en');
 
-// Get specific country name  
 $name = Countries::getName('GB');        // "United Kingdom"
 $name = Countries::getName('GB', 'fr');  // "Royaume-Uni"
 
-// Code conversion
 $alpha3 = Countries::getAlpha3Code('GB'); // "GBR"
 $numeric = Countries::getNumericCode('GB'); // "826"
 
-// Validation
 $exists = Countries::exists('GB');       // true
 ```
 
-### 3. Currencies Class
+### Symfony 7.3 Currencies Class
+
 ```php
 use Symfony\Component\Intl\Currencies;
 
-// Get all currency names
+// v7.3 Currencies API
 $currencies = Currencies::getNames($locale = 'en');
 
-// Get currency details
 $name = Currencies::getName('USD');           // "US Dollar"
 $symbol = Currencies::getSymbol('USD');       // "$"
 $digits = Currencies::getFractionDigits('USD'); // 2
 
-// Validation
 $exists = Currencies::exists('USD');          // true
 ```
 
-### 4. Locales Class
+### Symfony 7.3 Locales Class
+
 ```php
 use Symfony\Component\Intl\Locales;
 
-// Get all locale names
+// v7.3 Locales API
 $locales = Locales::getNames($locale = 'en');
 
-// Get specific locale name
 $name = Locales::getName('fr_FR');       // "French (France)"
 $name = Locales::getName('fr_FR', 'fr'); // "français (France)"
 
-// Validation
 $exists = Locales::exists('fr_FR');      // true
 ```
 
-### 5. Scripts Class
+### Symfony 7.3 Scripts Class
+
 ```php
 use Symfony\Component\Intl\Scripts;
 
-// Get all script names
+// v7.3 Scripts API
 $scripts = Scripts::getNames($locale = 'en');
 
-// Get specific script name
 $name = Scripts::getName('Latn');        // "Latin"
 $name = Scripts::getName('Cyrl', 'ru');  // "кириллица"
 
-// Validation
 $exists = Scripts::exists('Latn');       // true
 ```
 
-### 6. Timezones Class
+### Symfony 7.3 Timezones Class
+
 ```php
 use Symfony\Component\Intl\Timezones;
 
-// Get all timezone names
+// v7.3 Timezones API
 $timezones = Timezones::getNames($locale = 'en');
 
-// Get specific timezone details
 $name = Timezones::getName('Europe/Paris');     // "Central European Time"
 $offset = Timezones::getRawOffset('Europe/Paris'); // 3600 (seconds)
 $gmt = Timezones::getGmtOffset('Europe/Paris');    // "GMT+01:00"
 
-// Country timezones
 $countryTimezones = Timezones::forCountryCode('US');
 
-// Validation
 $exists = Timezones::exists('Europe/Paris');    // true
 ```
 
-## Locale Handling
+### Symfony 7.3 Locale Management
 
-### Default Locale Configuration
 ```php
-// Set default locale globally
+// v7.3 global locale configuration
 \Locale::setDefault('en_US');
 
-// All methods will use this locale unless overridden
+// All methods use default locale unless overridden
 $languages = Languages::getNames(); // Uses 'en_US'
 $languages = Languages::getNames('fr'); // Override to 'fr'
 ```
 
-### Locale Fallback Chain
+### Symfony 7.3 Form Integration
+
 ```php
-// Symfony follows ICU locale fallback rules:
-// 'en_US_POSIX' → 'en_US' → 'en' → root locale
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+
+// v7.3 form choices with Intl
+$builder->add('country', ChoiceType::class, [
+    'choices' => Countries::getNames($locale),
+]);
+
+$builder->add('language', ChoiceType::class, [
+    'choices' => Languages::getNames($locale),
+]);
+
+$builder->add('currency', ChoiceType::class, [
+    'choices' => Currencies::getNames($locale),
+]);
 ```
 
-## ICU Data Integration
+### Symfony 7.3 Currency Display Pattern
 
-### Data Source
-- Uses ICU library data (version-specific)
-- Data includes CLDR (Common Locale Data Repository)
-- Automatically updated with ICU releases
-
-### Data Coverage
 ```php
-// Supported data types:
-// - Language codes (ISO 639-1/2)  
-// - Country codes (ISO 3166-1)
-// - Currency codes (ISO 4217)
-// - Script codes (ISO 15924)
-// - Timezone identifiers (IANA)
-```
-
-## Practical Usage Patterns
-
-### 1. Locale-Aware Forms
-```php
-use Symfony\Component\Intl\Countries;
-use Symfony\Component\Intl\Languages;
-
-// Country dropdown
-$countries = Countries::getNames($request->getLocale());
-
-// Language selector
-$languages = Languages::getNames($request->getLocale());
-```
-
-### 2. Currency Display
-```php
-use Symfony\Component\Intl\Currencies;
-
+// v7.3 currency formatting helper
 $currency = 'EUR';
 $symbol = Currencies::getSymbol($currency);     // "€"
 $name = Currencies::getName($currency, $locale); // "Euro"
 $digits = Currencies::getFractionDigits($currency); // 2
 
-// Format: "€ 123.45 (Euro)"
 $display = sprintf('%s %s (%s)', 
     $symbol, 
     number_format($amount, $digits), 
@@ -189,21 +156,13 @@ $display = sprintf('%s %s (%s)',
 );
 ```
 
-### 3. Multi-Language Data Display
-```php
-use Symfony\Component\Intl\Languages;
+### Symfony 7.3 Validation Integration
 
-// Display user's language in their locale
-$userLocale = $user->getLocale();
-$displayLanguage = Languages::getName($userLocale, $userLocale);
-```
-
-### 4. Validation Integration
 ```php
-use Symfony\Component\Intl\Countries;
 use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
-// Custom constraint using Intl data
+// v7.3 custom validator using Intl
 class ValidCountry extends Assert\Callback
 {
     public function validate($value, ExecutionContextInterface $context)
@@ -213,70 +172,55 @@ class ValidCountry extends Assert\Callback
         }
     }
 }
+
+class ValidCurrency extends Assert\Callback
+{
+    public function validate($value, ExecutionContextInterface $context)
+    {
+        if (!Currencies::exists($value)) {
+            $context->addViolation('Invalid currency code');
+        }
+    }
+}
 ```
 
-## Integration Points
+### Symfony 7.3 Error Handling
 
-### With Translation Component
 ```php
-// Intl provides locale data, Translation handles message formatting
-// See: ~/.claude/knowledge/Symfony/translation-v73.md
-```
-
-### With ICU MessageFormat
-```php
-// Intl provides locale context for ICU MessageFormat patterns
-// See: ~/.claude/knowledge/icu-messageformat-v76.md
-```
-
-### With Form Component
-```php
-// Intl data commonly used in ChoiceType fields
-use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
-
-$builder->add('country', ChoiceType::class, [
-    'choices' => Countries::getNames($locale),
-]);
-```
-
-## Performance Considerations
-
-### Data Caching
-- ICU data is loaded on-demand
-- Results should be cached for repeated access
-- Consider using Symfony Cache component
-
-### Memory Usage
-```php
-// Efficient: Get only needed data
-$countryName = Countries::getName('US');
-
-// Less efficient: Load all countries for single lookup  
-$allCountries = Countries::getNames();
-$countryName = $allCountries['US'];
-```
-
-## Error Handling
-
-### Common Exceptions
-```php
-// Invalid locale/code handling
+// v7.3 exception handling
 try {
     $name = Countries::getName('INVALID');
 } catch (\InvalidArgumentException $e) {
     // Handle invalid country code
 }
 
-// Existence checks before access
+// v7.3 existence checks
 if (Currencies::exists($currencyCode)) {
     $symbol = Currencies::getSymbol($currencyCode);
 }
+
+if (Languages::exists($languageCode)) {
+    $name = Languages::getName($languageCode, $locale);
+}
 ```
 
-## Cross-References
-- Related Knowledge: 
-  - ~/.claude/knowledge/Symfony/translation-v73.md
-  - ~/.claude/knowledge/icu-messageformat-v76.md
-  - ~/.claude/knowledge/Symfony/message-formats-v73.md
-- Agent Applications: Symfony internationalization, form building, data validation
-- Update Schedule: Re-process with new Symfony major versions
+### Symfony 7.3 Performance Optimization
+
+```php
+// v7.3 efficient single lookups
+$countryName = Countries::getName('US');
+
+// v7.3 avoid unnecessary bulk loading
+// Less efficient for single lookups:
+$allCountries = Countries::getNames();
+$countryName = $allCountries['US'];
+```
+
+### Symfony 7.3 ICU Standards
+
+- **Languages**: ISO 639-1/639-2 codes
+- **Countries**: ISO 3166-1 codes (alpha-2, alpha-3, numeric)
+- **Currencies**: ISO 4217 codes
+- **Scripts**: ISO 15924 codes
+- **Timezones**: IANA timezone database
+- **Data Source**: ICU library with CLDR (Common Locale Data Repository)

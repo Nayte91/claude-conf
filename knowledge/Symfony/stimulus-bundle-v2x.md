@@ -1,5 +1,5 @@
 ## Header
-- **Source URL**: https://raw.githubusercontent.com/symfony/stimulus-bundle/refs/heads/2.x/doc/index.rst
+- **Source**: https://raw.githubusercontent.com/symfony/stimulus-bundle/refs/heads/2.x/doc/index.rst
 - **Processed Date**: 2025-01-25
 - **Domain**: symfony/stimulus-bundle
 - **Version**: v2x
@@ -8,63 +8,141 @@
 
 ## Body
 
-### Core Technical Specifications
+### StimulusBundle 2.x Configuration
 
-#### 1. Controller Management
-- **Location**: `assets/controllers/` directory
-- **Supports**: JavaScript and TypeScript controllers
-- **Lazy loading**: via `/* stimulusFetch: 'lazy' */` comment
-- **Registration**: Automatic through `assets/controllers.json`
-
-#### 2. Asset Integration Strategies
-Compatible with two asset handling systems:
-- **AssetMapper** (PHP-based)
-- **Webpack Encore** (Node-based)
-
-#### 3. Controller Configuration Patterns
 ```yaml
+# config/packages/stimulus.yaml
 stimulus:
     controller_paths:
         - '%kernel.project_dir%/assets/controllers'
     controllers_json: '%kernel.project_dir%/assets/controllers.json'
 ```
 
-#### 4. Stimulus Controller Structure
+### Controller Registration System
+
+#### Auto-Discovery Mechanism
+- **File location**: `assets/controllers/*.js` or `assets/controllers/*.ts`
+- **Auto-registration**: Via `assets/controllers.json` file
+- **Naming convention**: `hello_controller.js` → `hello` controller
+
+#### controllers.json Format
+```json
+{
+    "controllers": {
+        "hello": {
+            "enabled": true,
+            "fetch": "eager",
+            "autoimport": {
+                "@hotwired/stimulus/webpack-helpers": true
+            }
+        }
+    },
+    "entrypoints": []
+}
+```
+
+### Lazy Loading Implementation
+
+#### Controller-Level Lazy Loading
 ```javascript
+/* stimulusFetch: 'lazy' */
 import { Controller } from '@hotwired/stimulus';
 
 export default class extends Controller {
     connect() {
-        // Initialization logic
+        // Loaded only when first used
     }
 }
 ```
 
-#### 5. Data Attribute Rendering
-- **Dynamic generation**: controller, action, and target attributes
-- **JSON encoding**: Automatic for complex values
-- **Escape handling**: For attribute values
+### Twig Integration Functions
 
-#### 6. Performance Considerations
-- **Eager vs Lazy** controller loading
-- **Dynamic discovery**: Controller auto-discovery
-- **Minimal overhead**: Runtime performance optimization
+#### stimulus_controller() Function
+```twig
+{# Basic usage #}
+<div {{ stimulus_controller('search') }}>
 
-#### 7. Integration Hooks
-**Twig helper functions**:
-- `stimulus_controller()`
-- `stimulus_action()`
-- `stimulus_target()`
+{# With values #}
+<div {{ stimulus_controller('search', {
+    'query': searchTerm,
+    'limit': 10
+}) }}>
 
-### Key Technical Constraints
-- Requires Symfony framework
-- Depends on Stimulus JavaScript framework
-- Requires modern JavaScript module system
-- Supports TypeScript with additional configuration
+{# Multiple controllers #}
+<div {{ stimulus_controller('search|modal') }}>
+```
 
-### Recommended Implementation Strategy
-1. **Install bundle** via Composer
-2. **Configure** asset handling system
-3. **Create controllers** in designated directory
-4. **Utilize Twig helpers** for attribute management
-5. **Leverage lazy loading** for complex interactions
+#### stimulus_action() Function
+```twig
+{# Basic action binding #}
+<button {{ stimulus_action('search', 'submit') }}>Search</button>
+
+{# Multiple actions #}
+<input {{ stimulus_action('search', 'input->search#query') }}>
+
+{# Event modifiers #}
+<form {{ stimulus_action('form', 'submit->save', { prevent: true }) }}>
+```
+
+#### stimulus_target() Function
+```twig
+{# Basic target #}
+<input {{ stimulus_target('search', 'input') }}>
+
+{# Multiple targets #}
+<div {{ stimulus_target('modal', 'content|backdrop') }}>
+```
+
+### AssetMapper Integration (2.x)
+
+#### Asset Pipeline Configuration
+```yaml
+# config/packages/asset_mapper.yaml
+framework:
+    asset_mapper:
+        paths:
+            - assets/
+        excluded_patterns:
+            - '*/tests/*'
+```
+
+### Asset Bundle Generation
+
+#### Third-Party Controller Integration
+```json
+{
+    "controllers": {
+        "@symfony/ux-dropzone": {
+            "dropzone": {
+                "enabled": true,
+                "fetch": "eager"
+            }
+        }
+    }
+}
+```
+
+### TypeScript Support (2.x)
+
+#### Controller Typing
+```typescript
+import { Controller } from '@hotwired/stimulus';
+
+export default class extends Controller<HTMLFormElement> {
+    static values = {
+        url: String,
+        method: { type: String, default: 'POST' }
+    };
+
+    connect(): void {
+        // TypeScript controller implementation
+    }
+}
+```
+
+### Performance Characteristics
+
+- **Eager loading**: Controllers loaded at page load
+- **Lazy loading**: Controllers loaded on first DOM interaction
+- **Bundle size**: ~2KB overhead for registration system
+- **Runtime cost**: Minimal DOM scanning on page load

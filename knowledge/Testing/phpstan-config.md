@@ -1,5 +1,5 @@
 ## Header
-- **Source URL**: https://phpstan.org/config-reference
+- **Source**: https://phpstan.org/config-reference
 - **Processed Date**: 2025-01-25
 - **Domain**: phpstan.org
 - **Version**: Latest
